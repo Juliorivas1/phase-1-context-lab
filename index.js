@@ -1,13 +1,68 @@
-/* Your Code Here */
+function createEmployeeRecord([firstName, familyName, title, payPerHour]) {
+    return {
+        firstName,
+        familyName,
+        title,
+        payPerHour,
+        timeInEvents: [],
+        timeOutEvents: [],
+    };
+}
 
-/*
- We're giving you this function. Take a look at it, you might see some usage
- that's new and different. That's because we're avoiding a well-known, but
- sneaky bug that we'll cover in the next few lessons!
+function createEmployeeRecords(employeeData) {
+    return employeeData.map(createEmployeeRecord);
+}
 
- As a result, the lessons for this function will pass *and* it will be available
- for you to use if you need it!
- */
+function createTimeInEvent(employeeRecord, dateStamp) {
+    let [date, hour] = dateStamp.split(' ');
+
+    employeeRecord.timeInEvents.push({
+        type: "TimeIn",
+        hour: parseInt(hour, 10),
+        date,
+    });
+
+    return employeeRecord;
+}
+
+function createTimeOutEvent(employeeRecord, dateStamp) {
+    let [date, hour] = dateStamp.split(' ');
+
+    employeeRecord.timeOutEvents.push({
+        type: "TimeOut",
+        hour: parseInt(hour, 10),
+        date,
+    });
+
+    return employeeRecord;
+}
+
+
+function hoursWorkedOnDate(employee, date) {
+    let inEvent = employee.timeInEvents.find((e) => e.date === date)
+    let outEvent = employee.timeOutEvents.find((e) => e.date === date)
+    return (outEvent.hour - inEvent.hour) / 100
+}
+
+function wagesEarnedOnDate(employee, date) {
+    let wages = hoursWorkedOnDate(employee, date) * employee.payPerHour
+    return wages
+}
+
+function allWagesFor2(employee) {
+    let eligibleDates = employee.timeInEvents.map((e) => e.date)
+    let payable = eligibleDates.reduce((memo, date) => memo + wagesEarnedOnDate(employee, date), 0)
+    return payable
+}
+
+function findEmployeeByFirstName(srcArray, firstName) {
+    return srcArray.find((rec) => rec.firstName === firstName)
+}
+
+function calculatePayroll(arrayOfEmployeeRecords) {
+    return arrayOfEmployeeRecords.reduce((memo, rec) => memo + allWagesFor(rec), 0)
+}
+
 
 const allWagesFor = function () {
     const eligibleDates = this.timeInEvents.map(function (e) {
